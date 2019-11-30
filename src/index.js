@@ -1,12 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import 'babel-polyfill';
+import express from 'express';
+import { matchRoutes } from 'react-router-config';
+import Routes from './client/Routes';
+import renderer from './helpers/renderer';
+import createStore from './helpers/createStore';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const app = express();
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+app.use(express.static('public'));
+app.get('*', (req, res) => {
+    const store = createStore();
+
+    const promises = matchRoutes(Routes, req.path).map(({ route }) => {
+        return route.loadData ? route.loadData(store) : null;
+    });
+
+    Promise.all(promises).then(() => {
+        res.send(renderer(req, store));
+    });
+});
+
+app.listen(3000, () => {
+    console.log('Listening on port 300');
+});
