@@ -12,8 +12,8 @@ deploy:
   edge: true
   provider: elasticbeanstalk
   region: 'us-east-1'
-  app: "docker-react"
-  env: "DockerReact-env"
+  app: "news-react"
+  env: "NewsReact-env"
   bucket_name: "elasticbeanstalk-us-east-1-360399115248"
   bucket_path: "docker-react"
   on:
